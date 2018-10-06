@@ -10,16 +10,16 @@ const fetch = require('node-fetch');
 let isInitialised = false;
 
 const zeroWei = 0;
-export const noData = "0x00";
-export const rewardTypeEther = "0x0000000000000000000000000000000000000000";
-export const relayerUrl = "http://locahost:8080";
+const noData = "0x00";
+const rewardTypeEther = "0x0000000000000000000000000000000000000000";
+const relayerUrl = "http://localhost:8080";
 
 let web3;
 let privateKey;
 let publicAddress;
 let personalWalletAddress;
 
-export const initSdk = (_web3, _privateKey, _personalWalletAddress) => {
+const initSdk = (_web3, _privateKey, _personalWalletAddress) => {
     web3 = _web3;
     personalWalletAddress = _personalWalletAddress;
     privateKey = Buffer.from(_privateKey, 'hex');
@@ -27,13 +27,13 @@ export const initSdk = (_web3, _privateKey, _personalWalletAddress) => {
     isInitialised = true;
 }
 
-export const getTsn = async () => {
+const getTsn = async () => {
     const response = await fetch(relayerUrl);
     const json = await response.json();
     return json.tsn;
 }
 
-export const preparePayload = async (targetWallet, from, to, value, data, rewardType, rewardAmount) => {
+const preparePayload = async (targetWallet, from, to, value, data, rewardType, rewardAmount) => {
     if(!isInitialised) console.log("ERROR: SDK not initialized");
 
     const personalWalletABI = [{"constant":false,"inputs":[{"name":"_v","type":"uint8"},{"name":"_r","type":"bytes32"},{"name":"_s","type":"bytes32"},{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"},{"name":"_data","type":"bytes"},{"name":"_rewardType","type":"address"},{"name":"_rewardAmount","type":"uint256"}],"name":"execute","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isActionAccount","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"nonces","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isMasterAccount","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"roles","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"login","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"masterAccount","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
@@ -61,7 +61,7 @@ export const preparePayload = async (targetWallet, from, to, value, data, reward
     return JSON.stringify(payload);
 }
 
-export const prepareTokenTransferData = async (amount, to) => {
+const prepareTokenTransferData = async (amount, to) => {
     const encoded = await web3.eth.abi.encodeFunctionCall({
         name: 'transfer',
         type: 'function',
@@ -76,7 +76,7 @@ export const prepareTokenTransferData = async (amount, to) => {
     return encoded;
 }
 
-export const prepareAddMasterData = async (account) => {
+const prepareAddMasterData = async (account) => {
     const encoded = await web3.eth.abi.encodeFunctionCall({
         name: 'addMasterAccount',
         type: 'function',
@@ -88,7 +88,7 @@ export const prepareAddMasterData = async (account) => {
     return encoded;
 }
 
-export const prepareAddActionData = async (account) => {
+const prepareAddActionData = async (account) => {
     const encoded = await web3.eth.abi.encodeFunctionCall({
         name: 'addActionAccount',
         type: 'function',
@@ -100,30 +100,30 @@ export const prepareAddActionData = async (account) => {
     return encoded;
 }
 
-export const transferEtherNoReward = async (ethAmountInWei, toAddress) => {
+const transferEtherNoReward = async (ethAmountInWei, toAddress) => {
     return await preparePayload(personalWalletAddress, publicAddress, toAddress, ethAmountInWei, noData, rewardTypeEther, zeroWei);
 }
 
-export const transferEtherWithEtherReward = async (ethAmountInWei, toAddress, rewardAmount) => {
+const transferEtherWithEtherReward = async (ethAmountInWei, toAddress, rewardAmount) => {
     return await preparePayload(personalWalletAddress, publicAddress, toAddress, ethAmountInWei, noData, rewardTypeEther, rewardAmount);
 }
 
-export const transferTokensNoReward = async (tokenAddress, amount, toAddress) => {
+const transferTokensNoReward = async (tokenAddress, amount, toAddress) => {
     const data = await prepareTokenTransferData(amount, toAddress);
     return await preparePayload(personalWalletAddress, publicAddress, tokenAddress, zeroWei, data, rewardTypeEther, zeroWei);
 }
 
-export const transferTokensWithTokenReward = async (tokenAddress, amount, toAddress, rewardAmount) => {
+const transferTokensWithTokenReward = async (tokenAddress, amount, toAddress, rewardAmount) => {
     const data = await prepareTokenTransferData(amount, toAddress);
     return await preparePayload(personalWalletAddress, publicAddress, tokenAddress, zeroWei, data, tokenAddress, rewardAmount);
 }
 
-export const addMasterNoReward = async (account) => {
+const addMasterNoReward = async (account) => {
     const data = await prepareAddMasterData(account);
     return await preparePayload(personalWalletAddress, publicAddress, personalWalletAddress, zeroWei, data, rewardTypeEther, zeroWei);
 }
 
-export const addActionNoReward = async (account) => {
+const addActionNoReward = async (account) => {
     const data = await prepareAddActionData(account);
     return await preparePayload(personalWalletAddress, publicAddress, personalWalletAddress, zeroWei, data, rewardTypeEther, zeroWei);
 }

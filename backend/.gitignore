@@ -28,3 +28,4 @@ package-lock.json
 /node_modules
 public/reload.txt
 .tern-port
+build

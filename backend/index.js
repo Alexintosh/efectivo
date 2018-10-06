@@ -4,91 +4,18 @@ const bodyParser = require('body-parser');
 const Tx = require('ethereumjs-tx');
 const ethUtils = require('ethereumjs-util');
 const app = express();
+const personalWallet = require('./build/contracts/PersonalWallet.json')
 app.use(bodyParser.json());
 
-const web3 = new Web3(new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER));
-const privateKey = Buffer.from(process.env.PRIVATE_KEY, 'hex');
-const publicAddress = ethUtils.bufferToHex(ethUtils.privateToAddress(privateKey));
+const {
+  w3,
+  executeCall,
+  relayAccount
+} = require('./src/provider');
+
 const PORT = 8080;
 const HOST = '0.0.0.0';
-const DAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
-
-function prepareData(input) {
-    let encoded = web3.eth.abi.encodeFunctionCall({
-        name: 'execute',
-        type: 'function',
-        inputs: [{
-            type: 'uint8',
-            name: 'v'
-        },{
-            type: 'bytes32',
-            name: 'r'
-        },{
-            type: 'bytes32',
-            name: 's'
-        },{
-            type: 'address',
-            name: 'from'
-        },{
-            type: 'address',
-            name: 'to'
-        },{
-            type: 'uint256',
-            name: 'value'
-        },{
-            type: 'bytes',
-            name: 'data'
-        },{
-            type: 'address',
-            name: 'rewardType'
-        },{
-            type: 'uint256',
-            name: 'rewardAmount'
-        }]
-    }, [input.v, input.r, input.s, input.from, input.to, input.value, input.data, input.rewardType, input.rewardAmount]);
-
-    return encoded;
-}
-
-const executeCall = async function(personalWallet, payload) {
-    //check if from is master account
-    //let personalWallet = new web3.eth.Contract(ABI, req.params.personalWallet);
-    //TODO: check gas estimates
-    const gasLimit = web3.utils.toHex("211000");
-    const gasPrice = web3.utils.toHex(web3.utils.toWei("10","gwei"));
-    const nonce = web3.utils.toHex(await web3.eth.getTransactionCount(publicAddress));
-
-    let data = prepareData(payload);
-
-    let rawTx = {
-        nonce: nonce,
-        gasPrice: gasPrice,
-        gasLimit: gasLimit,
-        to: personalWallet,
-        value: '0x00',
-        data: data
-    };
-
-    let tx = new Tx(rawTx);
-    tx.sign(privateKey);
-    let serializedTx = tx.serialize();
-
-    let txPromise = new Promise(function(resolve, reject){
-        web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
-            .once('transactionHash', function(hash){
-                console.log("hash", hash);
-                resolve(hash);
-            })
-            .once('receipt', function(receipt){
-                console.log(['transferToStaging Receipt:', receipt]);
-            })
-            .on('error', function(err) {
-                console.log("err", err);
-                reject(err);
-            });
-    });
-    return txPromise;
-};
+const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
 app.post('/execute/:personalWallet', async (req, res) => {
     let hash = await executeCall(req.params.personalWallet, req.body);
@@ -97,6 +24,19 @@ app.post('/execute/:personalWallet', async (req, res) => {
     res.json({txHash: hash});
 });
 
+app.post('/deploy/:address', async(req, res) => {
+  let contract = await new w3.eth.Contract(personalWallet.abi)
+  let receipt = await contract.deploy({
+    data: personalWallet.bytecode, arguments: [req.params.address]
+  }).send({
+    from: relayAccount,
+    gas: 1500000,
+    gasPrice: '30000000000'
+  })
+  res.status(200)
+  res.json({res: JSON.stringify(receipt._address)})
+})
+
 //test enpoint
 app.get('/ping', async (req, res) => {
     res.status(200);
@@ -104,5 +44,5 @@ app.get('/ping', async (req, res) => {
 });
 
 app.listen(PORT, HOST, function () {
-    console.log(`TSN is up and running using account: ${publicAddress} and web3 provider: ${process.env.WEB3_PROVIDER}...`);
+  console.log(`TSN is up and running using account: ${relayAccount} and web3 provider: ${w3.currentProvider.host}...`);
 });

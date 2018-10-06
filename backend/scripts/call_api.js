@@ -7,17 +7,7 @@ const user = require('./user.js')
 
 const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
-/*
-const getPersonalWallet = async pubAddr => {
-  const url = tenz.relayerUrl + '/personal/'+pubAddr
-  request(url, (error, response, body) => {
-    console.log('error:', error);
-    console.log('statusCode:', response && response.statusCode);
-    console.log('body:', body); // Print the HTML for the Google homepage.
-  });
-}
-*/
-
+let personalWalletAddress
 async function main() {
   const url = tenz.relayerUrl + '/deploy/'+user.userPubAddr
   request.post(url, (error, response, body) => {

@@ -13,10 +13,10 @@ module.exports = {
       port: 8545,
       network_id: '*'
     },
-    sasquatch_rpc: {
+    kovan: {
       host: 'sasquatch.network',
-      port: 19545,
-      network_id: '4'
+      port: 10545,
+      network_id: '*'
     },
     sasquatch_ws: {
       host: 'sasquatch.network',

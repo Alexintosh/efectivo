@@ -8,7 +8,6 @@ const w3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
 //const privateKey = Buffer.from(process.env.PRIVATE_KEY, 'hex');
 const privateKey = '0xcfe7e99b98d5a2024945b51b63ea967c17bb96c4413110aab49a9233bb97a65a'
 const publicAddress = ethUtils.bufferToHex(ethUtils.privateToAddress(privateKey));
-const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
 function prepareData(input) {
     let encoded = web3.eth.abi.encodeFunctionCall({

@@ -1,15 +1,10 @@
-#!/usr/bin/env node
 var request = require('request');
 const ethUtils = require('ethereumjs-util');
 
 const tenz = require('../src/tenzorum')
 const { w3 } = require('../src/provider.js')
-
-
 const user = require('./user.js')
 
-const privateKey = '0xf20fe8e18ce0da9a812d4b63c252781b0f75e3143c148e9d52438a5e385d6745'
-const userPubAddr = ethUtils.bufferToHex(ethUtils.privateToAddress(privateKey));
 const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
 /*
@@ -23,11 +18,8 @@ const getPersonalWallet = async pubAddr => {
 }
 */
 
-async function transferTokens(personalWalletAddress) {
-}
-
 async function main() {
-  const url = tenz.relayerUrl + '/deploy/'+userPubAddr
+  const url = tenz.relayerUrl + '/deploy/'+user.userPubAddr
   request.post(url, (error, response, body) => {
     console.log('error:', error);
     console.log('statusCode:', response && response.statusCode);
@@ -41,4 +33,29 @@ async function main() {
   })
 }
 
-main()
+module.exports = async(
+  truffleCB,
+  {artifacts = this.artifacts, verbose = true} = {}
+) => {
+  try {
+    let DAI
+    const network = artifacts.options._values.network
+    if (network === 'development') {
+      let addr = await(await artifacts.require('TestToken').deployed()).address
+      DAI = await artifacts.require('ERC20').at(addr)
+    }
+    if (network === 'kovan') {
+      DAI = await artifacts.require('ERC20').at(KDAI)
+    }
+    console.log('balance', await(await DAI.balanceOf(user.userPubAddr)).toString())
+    await main()
+  }
+  catch (e) {
+    console.error(e)
+  }
+}
+
+
+
+
+

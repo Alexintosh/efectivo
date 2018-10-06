@@ -18,6 +18,7 @@
     "express": "^4.16.3",
     "node-fetch": "^2.2.0",
     "request": "^2.88.0",
+    "truffle-hdwallet-provider": "0.0.6",
     "typedarray-to-buffer": "^3.1.5",
     "web3": "^1.0.0-beta.36",
     "yaeti": "^1.0.2"

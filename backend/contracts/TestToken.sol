@@ -9,8 +9,8 @@ contract TestToken {
 
   mapping(address => uint256) balances;
   uint256 public totalSupply;
-  string public name = "Tenzorum Test Token";
-  string public symbol = "TENZ";
+  string public name = "Fake dai";
+  string public symbol = "FDAI";
   uint8 public decimals = 18;
 
   /**

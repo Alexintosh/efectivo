@@ -34,7 +34,7 @@ app.post('/deploy/:address', async(req, res) => {
     gasPrice: '3000000000'
   })
   res.status(200)
-  res.json({res: JSON.stringify(receipt._address)})
+  res.json({res: receipt._address})
 })
 
 //test enpoint

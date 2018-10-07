@@ -2,16 +2,15 @@ require('dotenv').config()
 const Web3 = require('web3')
 const ethUtils = require('ethereumjs-util')
 
-//const w3 = new Web3(new Web3.providers.HttpProvider(process.env.WEB3_PROVIDER));
-const w3 = new Web3('http://localhost:8545')
-
-const pk = '282b525212437911c1f8da8649b2ac3b514adfd2fe62409e5b363d58d4027b8e'
+//kovan
+const w3 = new Web3(process.env.WEB3_PROVIDER)
+// rinkeby pk
+const pk = 'f20fe8e18ce0da9a812d4b63c252781b0f75e3143c148e9d52438a5e385d6745'
 const privateKey = Buffer.from(pk, 'hex')
 const publicAddress = ethUtils.bufferToHex(ethUtils.privateToAddress(privateKey))
 
 function prepareData(input) {
   let encoded = w3.eth.abi.encodeFunctionCall({
-
     name: 'execute',
     type: 'function',
     inputs: [{
@@ -70,6 +69,7 @@ const executeCall = async (personalWallet, payload) => {
 
 module.exports = {
   relayAccount: publicAddress,
+  relayPk: pk,
   w3,
   executeCall,
 }

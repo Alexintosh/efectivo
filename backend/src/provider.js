@@ -53,8 +53,8 @@ const executeCall = async function(personalWallet, payload) {
       //let personalWallet = new web3.eth.Contract(ABI, req.params.personalWallet);
       //TODO: check gas estimates
       const gasLimit = w3.utils.toHex("211000");
-      const gasPrice = w3.utils.toHex(web3.utils.toWei("10","gwei"));
-      const nonce = w3.utils.toHex(await web3.eth.getTransactionCount(publicAddress));
+      const gasPrice = w3.utils.toHex(w3.utils.toWei("10","gwei"));
+      const nonce = w3.utils.toHex(await w3.eth.getTransactionCount(publicAddress));
 
       let data = prepareData(payload);
 

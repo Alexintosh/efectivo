@@ -49,28 +49,29 @@ function prepareData(input) {
 }
 
 const executeCall = async function(personalWallet, payload) {
-      //check if from is master account
-      //let personalWallet = new web3.eth.Contract(ABI, req.params.personalWallet);
-      //TODO: check gas estimates
-      const gasLimit = w3.utils.toHex("211000");
-      const gasPrice = w3.utils.toHex(w3.utils.toWei("10","gwei"));
-      const nonce = w3.utils.toHex(await w3.eth.getTransactionCount(publicAddress));
+  console.log('in')
+  //check if from is master account
+  //let personalWallet = new web3.eth.Contract(ABI, req.params.personalWallet);
+  //TODO: check gas estimates
+  console.log('payload2', payload)
+  const gasLimit = w3.utils.toHex("211000");
+  const gasPrice = w3.utils.toHex(w3.utils.toWei("10","gwei"));
+  const nonce = w3.utils.toHex(await w3.eth.getTransactionCount(publicAddress));
 
-      let data = prepareData(payload);
+  let data = prepareData(payload);
 
-      let rawTx = {
-          nonce: nonce,
-          gasPrice: gasPrice,
-          gasLimit: gasLimit,
-          to: personalWallet,
-          value: '0x00',
-          data: data
-      };
+  let rawTx = {
+      nonce: nonce,
+      gasPrice: gasPrice,
+      gasLimit: gasLimit,
+      to: personalWallet,
+      value: '0x00',
+      data: data
+  };
 
-      let tx = new Tx(rawTx);
-      tx.sign(privateKey);
-      let serializedTx = tx.serialize();
-
+  let tx = new Tx(rawTx);
+  tx.sign(privateKey);
+  let serializedTx = tx.serialize();
 }
 
 module.exports = {

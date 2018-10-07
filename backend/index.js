@@ -15,16 +15,19 @@ const {
 
 const PORT = 8080;
 const HOST = '0.0.0.0';
-const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
 app.post('/execute/:personalWallet', async (req, res) => {
-    let hash = await executeCall(req.params.personalWallet, req.body);
-    res.status(202);
-    console.log("returning: " + hash);
-    res.json({txHash: hash});
+
+  console.log('before')
+  let hash = await executeCall(req.params.personalWallet, req.body);
+  console.log('after')
+  res.status(202);
+  console.log("returning: " + hash);
+  res.json({txHash: hash});
 });
 
 app.post('/deploy/:address', async(req, res) => {
+  console.log('relayer: ', relayAccount)
   let contract = await new w3.eth.Contract(personalWallet.abi)
   let receipt = await contract.deploy({
     data: personalWallet.bytecode, arguments: [req.params.address]

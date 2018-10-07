@@ -10,26 +10,29 @@ const KDAI = '0xc4375b7de8af5a38a93548eb8453a498222c4ff2';
 
 async function main(tokenAddr) {
 
-  console.log('token address', tokenAddr)
   let url = tenz.relayerUrl + '/deploy/'+user.userPubAddr
-  let personalWalletAddress = await fetch(url, { method: 'POST', body: {}})
-    .then(res => res.json())
-  personalWalletAddress = personalWalletAddress.res
+  // requests for a personal wallet
+  let personalWalletAddress = (await fetch(url, { method: 'POST', body: {}})
+    .then(res => res.json())).res
 
-  console.log('personalWalletAddress', personalWalletAddress)
-  console.log(user.privateKey)
-  
+  //init tenzorum sdk
   await tenz.initSdk(w3, user.privateKey, personalWalletAddress);
+  //build the compatible signature for the tenzorum personal wallet
   const payload = await tenz.transferTokensWithTokenReward(
     tokenAddr,
     1,
     await w3.eth.accounts.create().address,
     1 
-  );
+  )
 
   console.log('payload', payload)
   url = tenz.relayerUrl + '/execute/' + personalWalletAddress
-  await fetch(url, { method: 'POST', body: payload})
+  await fetch(url, {
+    method: 'POST',
+    body: payload,
+    headers: { 'Content-Type': 'application/json' },
+  }).then(res => res.json())
+    .then(json => console.log('metaaaaa!', json))
 }
 
 module.exports = async(

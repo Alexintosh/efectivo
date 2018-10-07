@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "docker:build": "",
+    "docker:build": "docker build -t sebohe/relayer .",
     "docker:run": ""
   },
   "license": "MIT",

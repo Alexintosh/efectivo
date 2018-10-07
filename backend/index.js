@@ -31,7 +31,7 @@ app.post('/deploy/:address', async(req, res) => {
   }).send({
     from: relayAccount,
     gas: 1500000,
-    gasPrice: '30000000000'
+    gasPrice: '3000000000'
   })
   res.status(200)
   res.json({res: JSON.stringify(receipt._address)})

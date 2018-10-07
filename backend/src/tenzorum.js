@@ -22,8 +22,9 @@ let personalWalletAddress;
 const initSdk = (_web3, _privateKey, _personalWalletAddress) => {
     web3 = _web3;
     personalWalletAddress = _personalWalletAddress;
-    privateKey = Buffer.from(_privateKey, 'hex');
-    publicAddress = ethUtils.bufferToHex(ethUtils.privateToAddress(privateKey));
+    let account = web3.eth.accounts.privateKeyToAccount(_privateKey)
+    privateKey = account.privateKey
+    publicAddress = account.address
     isInitialised = true;
 }
 

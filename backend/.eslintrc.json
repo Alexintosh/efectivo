@@ -12,6 +12,7 @@
         "sourceType": "module"
     },
     "rules": {
+        "no-console": ["error", { "allow": ["log", "error"] }],
         "indent": [
             "error",
             2

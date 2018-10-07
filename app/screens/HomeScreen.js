@@ -1,9 +1,11 @@
 import React from "react";
-import { Text, FlatList, View, ScrollView } from "react-native";
+import { Text, FlatList, View, ScrollView, Button } from "react-native";
 import strings from "../strings.js";
 import colors from "../colors.js";
 import moment from "moment";
 import AddressDisplay from "../components/AddressDisplay.js";
+import { Provider, Subscribe, Container } from "unstated";
+import CounterContainer from "../state.js";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -24,6 +26,15 @@ export default class HomeScreen extends React.Component {
             <Text>{strings.balance}</Text>
             <Text style={{ fontSize: 48 }}>$13.45</Text>
           </View>
+          <Subscribe to={[CounterContainer]}>
+            {counter => (
+              <View>
+                <Button title="-" onPress={() => counter.decrement()} />
+                <Text>{counter.state.count}</Text>
+                <Button title="+" onPress={() => counter.increment()} />
+              </View>
+            )}
+          </Subscribe>
         </View>
         <FlatList
           style={{

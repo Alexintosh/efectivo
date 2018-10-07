@@ -42,7 +42,14 @@ contract PersonalWallet {
 
       //make sure it was signed correctly by the originator
       require(ecrecover(
-        keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash)), _v, _r, _s) == _from);
+        keccak256(abi.encodePacked(
+          "\x19Ethereum Signed Message:\n32",
+          hash)
+        ),
+        _v,
+        _r,
+        _s
+      ) == _from);
 
       if(_rewardAmount > 0) {
         if(_rewardType == address(0)){

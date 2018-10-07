@@ -1,30 +1,25 @@
-const Web3 = require('web3');
-const express = require('express');
-const bodyParser = require('body-parser');
-const Tx = require('ethereumjs-tx');
-const ethUtils = require('ethereumjs-util');
-const app = express();
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
 const personalWallet = require('./build/contracts/PersonalWallet.json')
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 const {
   w3,
   executeCall,
   relayAccount
-} = require('./src/provider');
+} = require('./src/provider')
 
-const PORT = 8080;
-const HOST = '0.0.0.0';
+const PORT = 8080
+const HOST = '0.0.0.0'
 
 app.post('/execute/:personalWallet', async (req, res) => {
 
-  console.log('before')
-  let hash = await executeCall(req.params.personalWallet, req.body);
-  console.log('after')
-  res.status(202);
-  console.log("returning: " + hash);
-  res.json({txHash: hash});
-});
+  let hash = await executeCall(req.params.personalWallet, req.body)
+  res.status(202)
+  console.log("returning: " + hash)
+  res.json({txHash: hash})
+})
 
 app.post('/deploy/:address', async(req, res) => {
   console.log('relayer: ', relayAccount)
@@ -42,8 +37,8 @@ app.post('/deploy/:address', async(req, res) => {
 
 //test enpoint
 app.get('/ping', async (req, res) => {
-    res.status(200);
-    res.json({res: 'pong'});
+  res.status(200)
+  res.json({res: 'pong'})
 });
 
 app.listen(PORT, HOST, function () {
